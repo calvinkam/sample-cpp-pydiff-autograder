@@ -32,7 +32,8 @@ copy_files_from_dir_if_it_exists ../EXECUTION-FILES
 copy_files_from_dir_if_it_exists ../BUILD-FILES
 copy_files_from_dir_if_it_exists $SUBMISSION_SOURCE
 
-../build.sh
+# ../build.sh
+gcc *.c
 
 python3 ../grade.py > ../results.json
 

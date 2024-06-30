@@ -22,10 +22,11 @@ mkdir -p MAKE-REFERENCE-OUTPUT
 cd MAKE-REFERENCE-OUTPUT
 
 copy_files_from_dir_if_it_exists ../EXECUTION-FILES
-copy_files_from_dir_if_it_exists ../BUILD-FILES
+# copy_files_from_dir_if_it_exists ../BUILD-FILES
 copy_files_from_dir_if_it_exists ../REFERENCE-SOLUTION
 
-chmod u+x ../build.sh
-../build.sh
+# chmod u+x ../build.sh
+# ../build.sh
+gcc *.c
 
 python3 ../make_reference.py

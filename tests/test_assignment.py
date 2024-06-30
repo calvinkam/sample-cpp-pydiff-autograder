@@ -20,18 +20,18 @@ class TestAssignment(unittest.TestCase):
   @weight(10)
   def test_out(self):
     #Compare the stdout of the reference and student solution for helloConsole.py
-    self.compareOutput("./helloConsole")
+    self.compareOutput("./a.out",stdin="../tests/in01")
 
-  @weight(10)
-  def test_err(self):
-    #Compare the stderr of the reference and student solution for helloConsole.py
-    self.compareOutput("./helloConsole", stdout = False, stderr = True)
+  # @weight(10)
+  # def test_err(self):
+  #   #Compare the stderr of the reference and student solution for helloConsole.py
+  #   self.compareOutput("./helloConsole", stdout = False, stderr = True)
 
-  @weight(10)
-  def test_file(self):
-    #Compare the contents of 'hello.txt' after it is created by the reference
-    #solution and the student solution
-    self.compareOutput("./helloFile", stdout = False, extra_outfiles=["hello.txt"])
+  # @weight(10)
+  # def test_file(self):
+  #   #Compare the contents of 'hello.txt' after it is created by the reference
+  #   #solution and the student solution
+  #   self.compareOutput("./helloFile", stdout = False, extra_outfiles=["hello.txt"])
 
 
 
@@ -39,20 +39,34 @@ class TestAssignment(unittest.TestCase):
   #DO NOT EDIT BELOW THIS LINE
   def outputDirectory(self):
     return "../reference-output"
+  def testDirectory(self):
+    return "../tests"
 
   def outputFileName(self, output_source):
     return "%s/%s.%s" % (self.outputDirectory(), self._testMethodName, output_source)
 
-  def compareOutput(self, command, stdout = True, stderr = False, extra_outfiles = []):
+  def compareOutput(self, command, stdin = False, stdout = True, stderr = False, extra_outfiles = []):
     if (hasattr(self, "reference") and self.reference):
+      print("Reference!")
       with open(self.outputFileName('out'), 'w') as out, \
-      open(self.outputFileName('err'),'w') as err:
-        output = subprocess.run(command, stdout=out, stderr=err, shell=True)
+      open(self.outputFileName('err'),'w') as err, \
+      open(stdin,"r") as inp:
+        if stdin == False:
+          print("FALSE")
+          output = subprocess.run(command, stdout=out, stderr=err, shell=True)
+        else:
+          print("OK!")
+          output = subprocess.run(command, stdin=inp, stdout=out, stderr=err, shell=True)
+          print(output)
         for f in extra_outfiles:
           shutil.move(f, self.outputDirectory())
 
     else:
-      output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+      if stdin == False:
+        output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+      else:
+        with open(stdin, "r") as inp:
+          output = subprocess.run(command, stdin=inp, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
       if (stdout):
         student_out = output.stdout.decode()
         with open(self.outputFileName('out'), 'r') as ref_outfile:
